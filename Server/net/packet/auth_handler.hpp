@@ -1,6 +1,3 @@
-#ifndef AUTH_HANDLER_HPP
-#define AUTH_HANDLER_HPP
-
 #include "packet_handler.hpp"
 
 namespace net
@@ -14,5 +11,3 @@ namespace net
         };
     }
 }
-
-#endif
