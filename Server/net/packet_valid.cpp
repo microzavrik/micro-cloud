@@ -32,8 +32,13 @@ namespace net
                 else if(packet_type == "list") {
                     // 
                 }
-                else if(packet_type == "push") {
-                    //
+                else if(packet_type == "push_file") {
+                    if(j.contains("file_name") && j.contains("file_extension") && j.contains("file_size")) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
                 }
                 else if(packet_type == "down") {
                     //

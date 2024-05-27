@@ -8,23 +8,28 @@ namespace net
 
         void packet_handler_manager::register_handler(const std::string& key, std::unique_ptr<net::packet::packet_handler>&& handler)
         {
+            BOOST_LOG_TRIVIAL(info) << "Registered " << key << " packet";
             handlers[key] = std::move(handler);
         }
 
-        void packet_handler_manager::handle_packet(const std::string& key, const std::string& packet_data, db::users_db_manager* database)
+        std::pair<bool, std::string> packet_handler_manager::handle_packet(const std::string& key, const std::string& packet_data, db::users_db_manager& database,
+            boost::asio::ip::tcp::socket& socket)
         {
             if(handlers.find(key) != handlers.end()) {
-                handlers[key]->handle(packet_data, database);
+                BOOST_LOG_TRIVIAL(info) << "Call " << key << " packet handler";
+                return handlers[key]->handle(packet_data, database, socket);
             }
             else {
                 std::cout << "Handler not found for key: " << key << std::endl;
             }
+
+            return std::make_pair(false, "Packet handler error");
         }
 
         void packet_handler_manager::init()
         {
-            // register_handler("auth", std::make_unique<net::packet::auth_handler>());
             register_handler("reg", std::make_unique<net::packet::register_handler>());
+            register_handler("auth", std::make_unique<net::packet::auth_handler>());       
         }
     }
 }

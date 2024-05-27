@@ -1,5 +1,6 @@
 #include "net/server.hpp"
 #include "database/users_db_manager.hpp"
+#include "net/packet/packet_handler_manager.hpp"
 #include <boost/asio.hpp>
 #include <thread>
 
@@ -7,7 +8,12 @@ int main()
 {
     try
     {
-        db::users_db_manager db("users", "cloud_users", "postgres", "123123", "127.0.0.1", 5432);
+        net::packet::packet_handler_manager::init();
+        
+        db::users_db_manager db("users", "cloud_users", "postgres", "123123", "127.0.0.1", 5433);
+        db.database_check("users");
+        db.create_table();
+
         boost::asio::io_context ios;
         net::server* server = new net::server(ios, 8080, db);
         
@@ -17,6 +23,7 @@ int main()
         });
 
         ios.run();
+        
         t.join();
 
         delete server; 
